@@ -1,0 +1,192 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>numbers</groupId>
+	<artifactId>count</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Numbers count</name>
+
+	<!-- Properties -->
+	<properties>
+
+		<!-- Basic Properties -->
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- Java Standard Properties -->
+		<javax.persistence.api.version>2.2</javax.persistence.api.version>
+		<javax.ws.rs.api.version>2.0</javax.ws.rs.api.version>
+		<javax.inject.javaxinject.version>1</javax.inject.javaxinject.version>
+
+		<!-- Maven Properties -->
+		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+		<maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
+		<maven.findbugs.plugin.version>3.0.5</maven.findbugs.plugin.version>
+		<maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
+
+		<!-- Docker Properties -->
+		<docker.dockerfile.maven.plugin.version>1.3.4</docker.dockerfile.maven.plugin.version>
+		<docker.spotify.dockerfile.version>1.3.4</docker.spotify.dockerfile.version>
+
+		<!-- Spring Properties -->
+		<spring.core.version>4.3.12.RELEASE</spring.core.version>
+		<spring.boot.version>1.5.8.RELEASE</spring.boot.version>
+		<spring.boot.maven.plugin.version>Unspecified</spring.boot.maven.plugin.version>
+
+		<!-- Apache Project Properties -->
+		<apache.commons.io.version>Unspecified</apache.commons.io.version><!-- 
+			2.5 -->
+		<apache.commons.text.version>1.1</apache.commons.text.version>
+		<apache.commons.commons-lang3.version>3.0</apache.commons.commons-lang3.version>
+
+		<!-- Jackson Properties -->
+		<!-- Dependency is linked with: org.springframework.boot.spring-boot-dependencies -->
+		<jackson.core.version>2.8.8</jackson.core.version><!-- 2.8.8 -->
+		<jackson.databind.version>${jackson.core.version}</jackson.databind.version>
+		<jackson.datatype.jsr310.version>${jackson.core.version}</jackson.datatype.jsr310.version>
+		<!-- Dependency is linked with: org.apache.camel.camel-spring-boot-dependencies -->
+		<jackson.core.asl.version>Unspecified</jackson.core.asl.version><!-- 1.9.12 -->
+		<jackson.mapper.asl.version>${jackson.core.asl.version}</jackson.mapper.asl.version>
+		<jackson.modules.java8.version>2.9.4</jackson.modules.java8.version>
+		<!-- Dependency is linked with: org.apache.camel.camel-spring-boot-dependencies -->
+		<com.lmax.disruptor.version>Unspecified</com.lmax.disruptor.version>
+
+		<jaxb-api.version>2.2.11</jaxb-api.version>
+		
+		<!-- Test Properties -->
+		<!-- Dependency is linked with: org.springframework.boot.spring-boot-dependencies -->
+		<test.junit.version>Unspecified</test.junit.version><!-- 4.12 -->
+		<test.ng.version>6.11</test.ng.version><!-- Unspecified -->
+
+		<!-- Log -->
+		<org.apache.logging.log4j.version>2.8.2</org.apache.logging.log4j.version>
+
+	</properties>
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<!-- Spring Boot BOM -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+	<dependencies>
+
+		<!-- Spring STUFFS -->
+		<!-- Dependency is linked with: org.springframework.boot.spring-boot-dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+   <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+   </dependency>
+   <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>${jaxb-api.version}</version>
+      <scope>runtime</scope>
+   </dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<type>jar</type>
+		</dependency>
+
+		<!-- Test STUFF [TestNG | JUnit] -->
+		<!-- Dependency is linked with: org.apache.camel.camel-spring-boot-dependencies -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+			<version>${test.ng.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<!-- Parent Build / Plugins -->
+	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+
+			<!-- Maven Compile -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>${docker.dockerfile.maven.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>numbers/count</repository>
+					<tag>latest</tag>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>
