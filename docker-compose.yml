@@ -1,0 +1,28 @@
+version: "2"
+
+services:
+        redis-numbers:
+                container_name: redis-numbers
+                hostname: redis-numbers
+                image: redis
+                ports:
+                        - 6379:6379
+                networks:
+                        - cc-numbers
+
+        numbers-count:
+                container_name: numbers-count
+                hostname: numbers-count
+                image: numbers/count
+                ports:
+                        - 8080:8080
+                environment:
+                        - SPRING_PROFILES_ACTIVE=docker
+                        - JAVA_OPTS=-Xms500m -Xmx500m
+                depends_on:
+                        - redis-numbers
+                networks:
+                        - cc-numbers
+
+networks:
+        cc-numbers:

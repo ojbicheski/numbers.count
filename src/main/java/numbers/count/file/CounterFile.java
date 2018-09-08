@@ -23,6 +23,7 @@ public class CounterFile {
 	
 	private String line;
 	
+	private long linesRead = 0;
 
 	/**
 	 * @param fileName the fileName to set
@@ -43,7 +44,12 @@ public class CounterFile {
 	public boolean hasNext() throws IOException {
 		line = in.readLine();
 		
-		return Objects.nonNull(line) && !line.isEmpty();
+		if (Objects.isNull(line) || line.isEmpty()) {
+			return false;
+		}
+		
+		linesRead++;
+		return true;
 	}
 	
 	public String next() throws IOException {
@@ -68,4 +74,10 @@ public class CounterFile {
 		return true;
 	}
 
+	/**
+	 * @return the linesRead
+	 */
+	public long linesRead() {
+		return linesRead;
+	}
 }

@@ -6,15 +6,20 @@
 package numbers.count.rest.v1;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import numbers.count.cache.Counter;
+import numbers.count.config.AppConfig;
+import numbers.count.exception.SystemUnavailableException;
 import numbers.count.service.CounterService;
 
 /**
@@ -27,24 +32,53 @@ public class Rest {
 
 	@Autowired
 	private CounterService service;
+
+	@Autowired
+	private AppConfig config;
 	
-	@RequestMapping(path = "/count/{number}", method = RequestMethod.GET)
+	@PostMapping(path = "/count/{number}")
     @ResponseBody
-    public Counter get(@PathVariable("number") String number) {
-		Counter counter = service.find(number);
-    	return counter;
+    public void post(@PathVariable("number") String number) {
+		systemAvailable();
+		
+		service.add(number);
     }
 
-	@RequestMapping(path = "/count", method = RequestMethod.GET)
+	@GetMapping(path = "/count/{number}")
     @ResponseBody
-    public List<Counter> get() {
+    public Counter get(@PathVariable("number") String number) {
+		systemAvailable();
+		
+    	return service.find(number);
+    }
+
+	@GetMapping(path = "/count")
+    @ResponseBody
+    public Map<String, Long> map() {
+		systemAvailable();
+		
+		Map<String, Long> result = service.findAll().stream().collect(
+				Collectors.toMap(Counter::getNumber, Counter::getQuantity));
+    	return result;
+    }
+
+	@GetMapping(path = "/count/list")
+    @ResponseBody
+    public List<Counter> list() {
+		systemAvailable();
+		
     	return service.findAll();
     }
     
-    @RequestMapping(path = "/health", method = RequestMethod.GET)
+    @GetMapping(path = "/health")
     @ResponseBody
     public String health() {
         return "OK";
     }
 
+	private void systemAvailable() {
+		if (!config.isAvailable()) {
+			throw new SystemUnavailableException("The startup not finished... wait a moment.");
+		}
+	}
 }

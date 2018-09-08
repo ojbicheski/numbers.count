@@ -6,9 +6,12 @@
 package numbers.count.cache;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author orlei
@@ -18,6 +21,8 @@ import org.springframework.data.redis.core.RedisHash;
 public class Counter implements Serializable {
 
 	private static final long serialVersionUID = 5454208998230659228L;
+	
+	private int index;
 	
 	@Id
 	private String number;
@@ -35,9 +40,21 @@ public class Counter implements Serializable {
 	 * @param number the number to set
 	 */
 	public Counter setNumber(String number) {
-		this.number = number;
+		if (Objects.nonNull(number) && !number.isEmpty()) {
+			index = Integer.parseInt(number.trim());
+
+			this.number = number.trim();
+		}
 		
 		return this;
+	}
+
+	/**
+	 * @return the index
+	 */
+	@JsonIgnore
+	public int getIndex() {
+		return index;
 	}
 
 	/**
@@ -46,18 +63,15 @@ public class Counter implements Serializable {
 	public long getQuantity() {
 		return quantity;
 	}
-
-	/**
-	 * @param quantity the quantity to set
-	 */
-	public Counter setQuantity(long quantity) {
-		this.quantity = quantity;
+	
+	public Counter increase() {
+		this.quantity++;
 		
 		return this;
 	}
 	
-	public Counter increase() {
-		this.quantity++;
+	public Counter decrease() {
+		this.quantity--;
 		
 		return this;
 	}
@@ -69,7 +83,7 @@ public class Counter implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((number == null) ? 0 : number.hashCode());
+		result = prime * result + index;
 		return result;
 	}
 
@@ -88,14 +102,9 @@ public class Counter implements Serializable {
 			return false;
 		}
 		Counter other = (Counter) obj;
-		if (number == null) {
-			if (other.number != null) {
-				return false;
-			}
-		} else if (!number.equals(other.number)) {
+		if (index != other.index) {
 			return false;
 		}
 		return true;
 	}
-
 }

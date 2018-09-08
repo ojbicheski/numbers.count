@@ -25,20 +25,32 @@ import numbers.count.service.CounterService;
  *
  */
 @Configuration
-
 @ComponentScan("numbers.count.cache")
 @EnableRedisRepositories(basePackages = "numbers.count.cache")
 @EnableScheduling
-
-@PropertySource("classpath:application.properties")
+@PropertySource(value = { 
+		"application.properties", 
+		"application-${spring.profiles.active}.properties" })
 public class AppConfig {
 	
 	@Autowired
 	private CounterService service;
 	
+	@Autowired
+	private RedisTemplate<String, Object> redis;
+	
     @Value("${numbers.count.file}")
     private String fileName;
-	
+    
+    private boolean available = false;
+    
+	/**
+	 * @return the available
+	 */
+	public boolean isAvailable() {
+		return available;
+	}
+
 	@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
 	    return new JedisConnectionFactory();
@@ -53,6 +65,16 @@ public class AppConfig {
 	
 	@EventListener(ApplicationReadyEvent.class)
 	public void afterStartup() {
+		// Clear cache
+		System.out.println("Flushing Redis Cache...");
+		redis.getConnectionFactory().getConnection().flushAll();
+		System.out.println("Redis Cache flushed.");
+		
+		// Load file
+		System.out.println("Loading file...");
 		service.loadFile(fileName);
+		System.out.println("File loaded.");
+		
+		available = true;
 	}
 }
