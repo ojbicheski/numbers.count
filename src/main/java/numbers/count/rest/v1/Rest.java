@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +32,8 @@ import numbers.count.service.CounterService;
 @RestController
 @RequestMapping("/numbers")
 public class Rest {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private CounterService service;
@@ -50,6 +55,14 @@ public class Rest {
 		systemAvailable();
 		
     	return service.find(number);
+    }
+
+	@DeleteMapping(path = "/count/{number}")
+    @ResponseBody
+    public void delete(@PathVariable("number") String number) {
+		systemAvailable();
+		
+    	service.delete(number);
     }
 
 	@GetMapping(path = "/count")
@@ -78,6 +91,7 @@ public class Rest {
 
 	private void systemAvailable() {
 		if (!config.isAvailable()) {
+			logger.warn("The startup not finished.");
 			throw new SystemUnavailableException("The startup not finished... wait a moment.");
 		}
 	}

@@ -38,7 +38,7 @@ public class CounterFile {
 			throw new IllegalArgumentException("Field filename is required.");
 		}
 		
-		in = new BufferedReader(new FileReader(getClass().getResource(fileName).getFile()));
+		in = new BufferedReader(new FileReader(fileName));
 	}
 	
 	public boolean hasNext() throws IOException {
@@ -61,7 +61,9 @@ public class CounterFile {
 	}
 	
 	public void close() throws IOException {
-		in.close();
+		if (Objects.nonNull(in)) {
+			in.close();
+		}
 	}
 
 	private boolean validField(String field) {

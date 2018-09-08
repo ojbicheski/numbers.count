@@ -6,10 +6,13 @@
 package numbers.count;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +26,8 @@ import redis.embedded.RedisServer;
  */
 @SpringBootApplication
 public class App {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * @param args
@@ -33,24 +38,45 @@ public class App {
 	}
 
 	@Value("${spring.redis.port}")
-    private int redisPort;
+	private int redisPort;
 
-    private RedisServer redisServer;
+	@Value("${spring.profiles.active}")
+	private String profile;
 
-    @PostConstruct
-    public void startRedis() throws IOException {
-		System.out.println("starting redis...");
-        redisServer = new RedisServer(redisPort);
+	private RedisServer redisServer;
+
+	@PostConstruct
+	public void startRedis() throws IOException {
+		if (isNotEmbedded()) {
+			return;
+		}
+		
+		logger.info("starting redis...");
+		
+		redisServer = new RedisServer(redisPort);
+		
 		if (!redisServer.isActive()) {
 			redisServer.start();
 		}
-		System.out.println("redis started.");
-    }
+		
+		logger.info("redis started.");
+	}
 
-    @PreDestroy
-    public void stopRedis() {
-		System.out.println("shutting down redis...");
+	@PreDestroy
+	public void stopRedis() {
+		if (isNotEmbedded()) {
+			return;
+		}
+		
+		logger.info("shutting down redis...");
+		
 		redisServer.stop();
-		System.out.println("bye!");
-    }
+		
+		logger.info("bye!");
+	}
+
+	private boolean isNotEmbedded() {
+		return Objects.nonNull(profile) && 
+				"docker".equalsIgnoreCase(profile);
+	}
 }

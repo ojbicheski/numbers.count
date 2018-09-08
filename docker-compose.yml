@@ -19,6 +19,8 @@ services:
                 environment:
                         - SPRING_PROFILES_ACTIVE=docker
                         - JAVA_OPTS=-Xms500m -Xmx500m
+                links:
+                        - redis-numbers
                 depends_on:
                         - redis-numbers
                 networks:

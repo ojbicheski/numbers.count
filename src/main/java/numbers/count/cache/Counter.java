@@ -107,4 +107,12 @@ public class Counter implements Serializable {
 		}
 		return true;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Counter [index=" + index + ", number=" + number + ", quantity=" + quantity + "]";
+	}
 }

@@ -39,7 +39,8 @@ public class BasicTest extends AbstractTestNGSpringContextTests {
 	void testLoadFile() {
 		redis.getConnectionFactory().getConnection().flushAll();
 
-		service.loadFile("/numbers.txt");
+		service.loadFile(getClass().getResource("/numbers.txt").getFile());
+		
 		List<Counter> list = service.findAll();
 		
 		assertNotNull(list);
