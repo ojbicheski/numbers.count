@@ -55,9 +55,11 @@ Profiles:
 2. Test:
 
 - Access project folder
-- Execute command "mvn clean install -Dspring.profiles.active=test"
+- Option 1: Clean, Compile, Install and Test. Execute command "mvn clean install -Dspring.profiles.active=test"
+- Option 2: Only test. Execute command "mvn test -Dspring.profiles.active=test"
 
 3. Docker
 
 - Access project folder
+- Execute command "mvn clean install -DskipTest=true" to create docker image.
 - Execute command "docker-compose up -d"
