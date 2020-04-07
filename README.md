@@ -1,5 +1,5 @@
 # Request
-Create a Spring-Boot application that aggregates and counts each unique instance within the numbers.txt file.
+Create a Spring-Boot application that aggregates and counts each unique instance within the https://github.com/orleibicheski/numbers.count/blob/master/numbers.txt file.
 
 ## Requirements:
 - Expose an http endpoint at /numbers/count
